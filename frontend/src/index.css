@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.navbar a,
+span {
+  margin-right: 2rem;
+}
+
+.hero-logo {
+  margin-left: 4rem;
+}
+
+a {
+  text-decoration: none;
+}
