@@ -14,7 +14,7 @@ const Holdings = () => {
       // console.log(res.data);
       setAllHoldings(res.data);
     });
-  });
+  },[]);
 
   return (
     <>

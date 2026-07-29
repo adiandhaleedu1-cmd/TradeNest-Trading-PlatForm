@@ -39,7 +39,7 @@ export default WatchList;
 const WatchListItems = ({ stock }) => {
   const [showWatchListAction, setWatchListAction] = useState(false);
 
-  console.log(stock.name);
+  // console.log(stock.name);
 
   const handleMouseEnter = () => {
     setWatchListAction(true);
@@ -75,7 +75,11 @@ const WatchlistAction = ({ uid }) => {
 
   const handleBuyClick = () => {
     generalContext.openBuyWindow(uid);
-  }
+  };
+
+  const handleSellClick = () => {
+    generalContext.openSellWindow(uid);
+  };
 
   return (
     <span className="actions">
@@ -95,6 +99,7 @@ const WatchlistAction = ({ uid }) => {
           placement="top"
           arrow
           TransitionComponent={Grow}
+          onClick={handleSellClick}
         >
           <button className="sell">Sell</button>
         </Tooltip>
