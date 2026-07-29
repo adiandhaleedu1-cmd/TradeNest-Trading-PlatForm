@@ -16,6 +16,7 @@ const MONGO_URL = process.env.MONGO_URL;
 
 const { HoldingModel } = require("./models/HoldingModel");
 const { PositionModel } = require("./models/PositionModel");
+const { OrderModel } = require("./models/OrderModel");
 
 // app.get("/addPositions", async (req, res) => {
 //     let tempPositions = [
@@ -60,12 +61,25 @@ const { PositionModel } = require("./models/PositionModel");
 app.get("/allHoldings", async (req, res) => {
     const allHoldings = await HoldingModel.find({});
     await res.json(allHoldings);
-})
+});
 
 app.get("/allPositions", async (req, res) => {
     const allPositions = await PositionModel.find({});
     await res.json(allPositions);
-})
+});
+
+app.post("/newOrder", async (req, res) => {
+    const newOrder = new OrderModel({
+        name: req.body.name,
+        qty: req.body.qty,
+        price: req.body.price,
+        mode: req.body.mode,
+    });
+
+    // console.log(newOrder);
+    newOrder.save();
+    res.send("Order is saved!!");
+});
 
 async function startServer() {
     await mongoose.connect(MONGO_URL);
