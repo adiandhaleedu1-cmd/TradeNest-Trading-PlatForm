@@ -1,7 +1,14 @@
 import React from "react";
+import Hero from "./Hero";
+import AccountOpen from "../AccountOpen";
+import SignupForm from "./SignupFormPage";
 
 export default function Signup() {
     return (
-        <h1>Signup</h1>
+        <>
+            <Hero />
+            <SignupForm />
+            <AccountOpen />
+        </>
     )
 }
