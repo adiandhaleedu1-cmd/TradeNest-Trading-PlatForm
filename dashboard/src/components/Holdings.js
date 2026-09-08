@@ -12,7 +12,7 @@ const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/allHoldings").then((res) => {
+    axios.get("HostUrl/allHoldings").then((res) => {
       // console.log(res.data);
       setAllHoldings(res.data);
     });
@@ -92,8 +92,8 @@ const Holdings = () => {
         </div>
       </div>
 
-<br></br>
-<br></br>
+      <br></br>
+      <br></br>
       <VerticalChart data={data} />
 
     </>

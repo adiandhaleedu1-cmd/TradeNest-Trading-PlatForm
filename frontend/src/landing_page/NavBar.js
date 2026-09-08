@@ -15,11 +15,11 @@ export default function NavBar() {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <div className="navbar-nav align-items-center ms-auto" style={{ fontSize: "0.95rem" }}>
-                        <Link className="nav-link" to="signup" >Signup</Link>
-                        <Link className="nav-link" to="about" >About</Link>
-                        <Link className="nav-link" to="products" >Products</Link>
-                        <Link className="nav-link" to="pricing">Pricing</Link >
-                        <Link className="nav-link" to="support" >Support</Link >
+                        <Link className="nav-link" to="/signup" >Signup</Link>
+                        <Link className="nav-link" to="/about" >About</Link>
+                        <Link className="nav-link" to="/products" >Products</Link>
+                        <Link className="nav-link" to="/pricing">Pricing</Link >
+                        <Link className="nav-link" to="/support" >Support</Link >
                     </div >
                 </div >
             </div >

@@ -6,6 +6,9 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -17,6 +20,7 @@ const MONGO_URL = process.env.MONGO_URL;
 const { HoldingModel } = require("./models/HoldingModel");
 const { PositionModel } = require("./models/PositionModel");
 const { OrderModel } = require("./models/OrderModel");
+const { UserModel } = require("./models/UserModel");
 
 // app.get("/addPositions", async (req, res) => {
 //     let tempPositions = [
@@ -79,6 +83,76 @@ app.post("/newOrder", async (req, res) => {
     // console.log(newOrder);
     newOrder.save();
     res.send("Order is saved!!");
+});
+
+app.post("/signup", async (req, res) => {
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+
+        const encodedPass = await bcrypt.hash(
+            req.body.password,
+            salt
+        );
+
+        // console.log(salt, " - ", encodedPass, " - ", req.body.password);
+
+        const newUser = new UserModel({
+            name: req.body.name,
+            email: req.body.email,
+            password: encodedPass
+        })
+        // console.log(newUser);
+        await newUser.save();
+        res.status(201).json({
+            message: "Signup Successfull!!"
+        });
+    }
+    catch (e) {
+        console.log(e);
+        res.status(500).json({
+            message: "Signup Failed!!"
+        });
+    }
+});
+
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid Email."
+            });
+        }
+
+        const isPasswordIsCorrect = await bcrypt.compare(
+            password,
+            user.password
+        );
+        if (!isPasswordIsCorrect) {
+            return res.status(401).json({
+                message: "Invalid Password."
+            })
+        };
+
+        const jwtToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        res.status(200).json({
+            message: "Login Successfull..!",
+            token: jwtToken
+        })
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            message: "Something went wrong."
+        });
+    }
 });
 
 async function startServer() {

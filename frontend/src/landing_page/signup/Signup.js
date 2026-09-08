@@ -5,10 +5,10 @@ import SignupForm from "./SignupFormPage";
 
 export default function Signup() {
     return (
-        <>
+        <section className="pb-5">
             <Hero />
             <SignupForm />
             <AccountOpen />
-        </>
+        </section>
     )
 }
