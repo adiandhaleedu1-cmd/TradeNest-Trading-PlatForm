@@ -322,6 +322,7 @@ hr {
 .profile .username {
   font-size: 0.8rem;
   font-weight: 300;
+  margin: 0;
 }
 
 /* sudo selectors */
@@ -415,9 +416,9 @@ hr {
     border-radius: 2px;
 }
 
-.order-table tr td:last-child {
+/* .order-table tr td:last-child {
   font-size: 0.6rem;
-}
+} */
 
 .order-table td {
   padding: 10px 10px;
@@ -438,6 +439,17 @@ hr {
 .order-table td.loss {
   color: rgb(250, 118, 78);
 }
+
+ /* for order page  */
+/* .buy-mode {
+  color: rgb(72, 194, 55);
+  font-weight: 500;
+}
+
+.sell-mode {
+  color: rgb(250, 118, 78);
+  font-weight: 500;
+} */
 
 .row {
   display: flex;

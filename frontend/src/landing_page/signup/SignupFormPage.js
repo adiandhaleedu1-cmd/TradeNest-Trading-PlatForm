@@ -57,7 +57,7 @@ export default function SignupForm() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label for="inputEmail" class="form-label">
+                            <label htmlFor="inputEmail" className="form-label">
                                 Email address
                             </label>
                             <input
@@ -75,7 +75,7 @@ export default function SignupForm() {
                         </div>
 
                         <div class="mb-3">
-                            <label for="inputName" class="form-label">
+                            <label htmlFor="inputName" className="form-label">
                                 Enter Your Name
                             </label>
                             <input
@@ -90,7 +90,7 @@ export default function SignupForm() {
                         </div>
 
                         <div class="mb-3">
-                            <label for="inputPassword" class="form-label">
+                            <label htmlFor="inputPassword" className="form-label">
                                 Password
                             </label>
                             <input
@@ -103,7 +103,7 @@ export default function SignupForm() {
                             />
                         </div>
 
-                        <div class="mb-3 form-check">
+                        <div className="mb-3 form-check">
                             <input
                                 type="checkbox"
                                 className="form-check-input"

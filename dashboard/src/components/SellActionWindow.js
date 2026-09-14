@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
@@ -10,20 +10,42 @@ import "./BuyActionWindow.css";
 const SellActionWindow = ({ uid }) => {
     const [stockQuantity, setStockQuantity] = useState(1);
     const [stockPrice, setStockPrice] = useState(0.0);
+    const [error, setError] = useState("");
 
-    const handleSellClick = () => {
-        axios.post("http://localhost:8080/newOrder", {
-            name: uid,
-            qty: stockQuantity,
-            price: stockPrice,
-            mode: "Sell",
-        });
+    const generalContext = useContext(GeneralContext);
 
-        GeneralContext.closeSellWindow();
+    const handleSellClick = async () => {
+        console.log("Sell Button Clicked.");
+
+        try {
+            setError("");
+
+            const token = localStorage.getItem("token");
+
+            const response = await axios.post("http://localhost:8080/newOrder", {
+                name: uid,
+                qty: stockQuantity,
+                price: stockPrice,
+                mode: "Sell",
+            },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+            console.log("Sell response : ", response.data);
+            generalContext.closeSellWindow();
+        } catch (e) {
+            console.log("Sell Error: ",
+                e.response?.data || e.message);
+
+            setError(e.response?.data?.message || "Something went wrong.")
+        }
     };
 
     const handleCancelClick = () => {
-        GeneralContext.closeSellWindow();
+        generalContext.closeSellWindow();
     };
 
     return (
@@ -54,15 +76,23 @@ const SellActionWindow = ({ uid }) => {
                 </div>
             </div>
 
+            {
+                error && (
+                    <p className="error-message" style={{ color: "#dc3545" }}>
+                        {error}
+                    </p>
+                )
+            }
+
             <div className="buttons">
                 <span>Margin required ₹140.65</span>
                 <div>
-                    <Link className="btn btn-blue" onClick={handleSellClick}>
+                    <button type="button" className="btn btn-blue" onClick={handleSellClick}>
                         Sell
-                    </Link>
-                    <Link to="" className="btn btn-grey" onClick={handleCancelClick}>
+                    </button>
+                    <button type="button" className="btn btn-grey" onClick={handleCancelClick}>
                         Cancel
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>

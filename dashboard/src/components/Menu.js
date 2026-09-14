@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import "./profile.css";
 
 const Menu = () => {
 
@@ -11,8 +12,8 @@ const Menu = () => {
     setSelectedMenu(index);
   };
 
-  const handleProfileClick = (index) => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  const handleProfileClick = () => {
+    setIsProfileDropdownOpen((prev) => !prev);
   };
 
   const menuClass = "menu";
@@ -61,10 +62,30 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className="profile" onClick={handleProfileClick}>
-          <div className="avatar"><i class="fa-solid fa-circle-user" ></i></div>
-          <p className="username">USERID</p>
+        <div className="profile d-flex align-items-center" onClick={setIsProfileDropdownOpen}>
+          <div className="avatar"><i className="fa-solid fa-circle-user fs-2"></i></div>
+          <div>
+            <p className="username">USERID</p>
+          </div>
         </div>
+
+        {isProfileDropdownOpen && (
+          <div className="profile-popup">
+            <div >
+              <p>Name :  Adi</p>
+              <p>Email : adi@123</p>
+              <p>Account Status : Active</p>
+              <button type="button" className="logout-btn">
+                Logout
+              </button>
+              <button
+                className="close-btn"
+                onClick={(e) => { e.stopPropagation(); setIsProfileDropdownOpen(false) }}
+              >×
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

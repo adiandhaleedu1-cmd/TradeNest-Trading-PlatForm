@@ -9,12 +9,49 @@ const Positions = () => {
 
   const [allPositions, setAllPositions] = useState([]);
 
+  const HostUrl = process.env.REACT_APP_HOST_URL;
+
   useEffect(() => {
-    axios.get("HostUrl/allPositions").then((res) => {
+    const token = localStorage.getItem("token");
+
+    console.log("TOKEN FROM DASHBOARD:", token);
+
+    axios.get("http://localhost:8080/protected", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    .then((res) => {
+        console.log("PROTECTED RESPONSE:", res.data);
+    })
+    .catch((err) => {
+        console.log("PROTECTED ERROR:", err.response?.data);
+    });
+
+}, []);
+
+  useEffect(() => {
+    axios.get(`${HostUrl}/allPositions`).then((res) => {
       // console.log(res.data);
       setAllPositions(res.data);
+    });
+
+    // JWT Test
+    const token = localStorage.getItem("token");
+
+    axios.get("http://localhost:8080/protected", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-  })
+      .then((res) => {
+        console.log("Protected:", res.data);
+      })
+      .catch((err) => {
+        console.log("Protected Error:", err.response?.data);
+      });
+
+  }, []);
 
   return (
     <>

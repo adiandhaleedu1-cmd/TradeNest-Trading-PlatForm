@@ -9,6 +9,8 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
+const authMiddleware = require("./middlewares/authMiddleware");
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -21,6 +23,7 @@ const { HoldingModel } = require("./models/HoldingModel");
 const { PositionModel } = require("./models/PositionModel");
 const { OrderModel } = require("./models/OrderModel");
 const { UserModel } = require("./models/UserModel");
+const authMiddleWare = require("./middlewares/authMiddleware");
 
 // app.get("/addPositions", async (req, res) => {
 //     let tempPositions = [
@@ -62,34 +65,116 @@ const { UserModel } = require("./models/UserModel");
 //     res.send("Done");
 // })
 
-app.get("/allHoldings", async (req, res) => {
-    const allHoldings = await HoldingModel.find({});
-    await res.json(allHoldings);
+app.get("/allHoldings", authMiddleWare, async (req, res) => {
+    const allHoldings = await HoldingModel.find({ userId: req.userId });
+    res.json(allHoldings);
 });
 
-app.get("/allPositions", async (req, res) => {
-    const allPositions = await PositionModel.find({});
-    await res.json(allPositions);
+app.get("/allPositions", authMiddleWare, async (req, res) => {
+    const allPositions = await PositionModel.find({ userId: req.userId });
+    res.json(allPositions);
 });
 
-app.post("/newOrder", async (req, res) => {
+app.post("/newOrder", authMiddleWare, async (req, res) => {
+
+    const existingHolding = await HoldingModel.findOne({
+        userId: req.userId,
+        name: req.body.name
+    });
+
+    // Buy Logic
+    if (req.body.mode === "Buy") {
+        if (existingHolding) {
+            const oldQty = existingHolding.qty;
+            const oldAvg = existingHolding.avg;
+
+            const newQty = Number(req.body.qty);
+            const newPrice = Number(req.body.price);
+
+            existingHolding.avg = ((oldAvg * oldQty) + (newQty * newPrice)) / (oldQty + newQty);
+
+            existingHolding.qty += Number(req.body.qty);
+            await existingHolding.save();
+        }
+
+        if (!existingHolding) {
+            const newHolding = new HoldingModel({
+                userId: req.userId,
+                name: req.body.name,
+                qty: req.body.qty,
+                price: req.body.price,
+                avg: req.body.price,
+            });
+            // console.log(newOrder);
+            await newHolding.save();
+        }
+    }
+
+    // Sell Logic  
+    if (req.body.mode === "Sell") {
+        if (!existingHolding) {
+            return res.status(400).json({
+                message: "You don't own this Stock."
+            });
+        }
+
+        const sellQty = Number(req.body.qty)
+
+        if (existingHolding.qty < sellQty) {
+            return res.status(400).json({
+                message: "Insufficient Quantity."
+            })
+        }
+
+        existingHolding.qty -= sellQty;
+
+        if (existingHolding.qty === 0) {
+            await HoldingModel.deleteOne({
+                _id: existingHolding._id
+            });
+        } else {
+            await existingHolding.save();
+        }
+    }
+
+    // Creating New Order
     const newOrder = new OrderModel({
+        userId: req.userId,
         name: req.body.name,
         qty: req.body.qty,
         price: req.body.price,
         mode: req.body.mode,
     });
-
-    // console.log(newOrder);
-    newOrder.save();
+    await newOrder.save();
+    console.log("NEW ORDER SAVED:", newOrder);
     res.send("Order is saved!!");
+});
+
+app.get("/allorders", authMiddleWare, async (req, res) => {
+    try {
+        console.log("ALL ORDERS USER ID:", req.userId);
+        const allOrders = await OrderModel.find({ userId: req.userId });
+        console.log("ALL ORDERS FOUND:", allOrders);
+        res.status(200).json(allOrders);
+    } catch (e) {
+        console.log("order err", e.message);
+        res.status(500).json({
+            message: "Failed to fetch orders."
+        });
+    }
+});
+
+app.get("/protected", authMiddleware, (req, res) => {
+    res.status(200).json({
+        message: "You have access to protected route",
+        userId: req.userId,
+    });
 });
 
 app.post("/signup", async (req, res) => {
 
     try {
         const salt = await bcrypt.genSalt(10);
-
         const encodedPass = await bcrypt.hash(
             req.body.password,
             salt
@@ -119,7 +204,6 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-
         const user = await UserModel.findOne({ email });
         if (!user) {
             return res.status(401).json({
@@ -131,6 +215,7 @@ app.post("/login", async (req, res) => {
             password,
             user.password
         );
+
         if (!isPasswordIsCorrect) {
             return res.status(401).json({
                 message: "Invalid Password."
@@ -140,7 +225,7 @@ app.post("/login", async (req, res) => {
         const jwtToken = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "5h" }
         );
 
         res.status(200).json({

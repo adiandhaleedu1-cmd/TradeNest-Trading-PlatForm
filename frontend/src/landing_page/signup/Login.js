@@ -25,13 +25,19 @@ export default function Login() {
             );
             console.log(response.data);
 
-            const token = response.data.token;
-            localStorage.setItem("token", token);
+            if (response.status === 200 && response.data.token) {
+                localStorage.setItem("token", response.data.token);
+                window.location.href = `http://localhost:3001?token=${response.data.token}`;
+            }
+
         } catch (e) {
             console.log(e.response?.data);
+            if (e.response) {
+                alert(e.response.data.message);
+            } else {
+                alert("Something went wrong. Please try again.")
+            }
         }
-
-        window.location.href = "http://localhost:3001";
     }
 
     const handleChange = (e) => {
@@ -52,7 +58,7 @@ export default function Login() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label for="inputEmail" class="form-label">
+                            <label htmlFor="inputEmail" className="form-label">
                                 Email address
                             </label>
                             <input
@@ -66,8 +72,8 @@ export default function Login() {
                             />
                         </div>
 
-                        {/* <div class="mb-3">
-                    <label for="inputName" class="form-label">
+                        {/* <div className="mb-3">
+                    <label htmlFor="inputName" className="form-label">
                         Enter Your Name
                     </label>
                     <input
@@ -81,8 +87,8 @@ export default function Login() {
                     />
                 </div> */}
 
-                        <div class="mb-3">
-                            <label for="inputPassword" class="form-label">
+                        <div className="mb-3">
+                            <label htmlFor="inputPassword" className="form-label">
                                 Password
                             </label>
                             <input
@@ -95,7 +101,7 @@ export default function Login() {
                             />
                         </div>
 
-                        {/* <div class="mb-3 form-check">
+                        {/* <div className="mb-3 form-check">
                             <input
                                 type="checkbox"
                                 className="form-check-input"
