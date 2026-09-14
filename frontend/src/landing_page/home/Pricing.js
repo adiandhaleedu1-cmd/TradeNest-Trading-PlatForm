@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Pricing() {
     return (
@@ -7,7 +8,7 @@ export default function Pricing() {
                 <div className="col-md-6">
                     <h2>Unbeatable pricing</h2>
                     <p className="pt-3 pe-5">We pioneered the concept of discount broking and price transparency in India. Flat fees and no hidden charges.</p>
-                    <a href="/">See pricing <i className="fa-solid fa-arrow-right-long"></i></a>
+                    <Link to="pricing">See pricing <i className="fa-solid fa-arrow-right-long"></i></Link>
                 </div>
 
                 <div className="col-md-6 text-center d-flex">
@@ -20,7 +21,7 @@ export default function Pricing() {
                         <h1 className="py-2">₹20</h1>
                         <p className="py-3">Intraday and F&O;</p>
                     </div>
-                    
+
                 </div>
             </div>
         </section>

@@ -240,6 +240,27 @@ app.post("/login", async (req, res) => {
     }
 });
 
+app.get("/profile", authMiddleWare, async (req, res) => {
+    try {
+        console.log("PROFILE USER ID:", req.userId);
+        const currUser = await UserModel.findById(req.userId).select("-password");
+        console.log("PROFILE USER:", currUser);
+
+        if (!currUser) {
+            return res.status(404).json({
+                message: "User not Found.",
+            })
+        }
+        return res.status(200).json(currUser);
+    }
+    catch (e) {
+        console.log("profile:", e.message);
+        res.status(500).json({
+            message: "Failed to feach profile.",
+        })
+    }
+})
+
 async function startServer() {
     await mongoose.connect(MONGO_URL);
     console.log("DB connection done!");

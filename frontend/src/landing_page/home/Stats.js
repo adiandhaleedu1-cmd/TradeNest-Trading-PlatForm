@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Stats() {
     return (
@@ -25,13 +26,14 @@ export default function Stats() {
 
                     <div className="d-flex justify-content-evenly mt-3">
                         <p>
-                            <a href="/">Explore our product <i className="fa-solid fa-arrow-right-long"></i>
-                            </a>
+                            <Link to="/products">Explore our product <i className="fa-solid fa-arrow-right-long"></i>
+                            </Link>
                         </p>
-                        <p><a href="/">Try kite demo <i className="fa-solid fa-arrow-right-long"></i></a></p>
+                        <p>
+                            <Link to="/products">Try kite demo <i className="fa-solid fa-arrow-right-long"></i>
+                            </Link>
+                        </p>
                     </div>
-
-
                 </div>
             </div>
         </section>

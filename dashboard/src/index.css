@@ -416,9 +416,9 @@ hr {
     border-radius: 2px;
 }
 
-/* .order-table tr td:last-child {
-  font-size: 0.6rem;
-} */
+.order-table tr td:last-child {
+  font-size: 0.9rem;
+}
 
 .order-table td {
   padding: 10px 10px;

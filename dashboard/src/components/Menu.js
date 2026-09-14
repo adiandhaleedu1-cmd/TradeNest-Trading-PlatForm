@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "./profile.css";
 
@@ -7,14 +8,38 @@ const Menu = () => {
 
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
 
   const handleMenuClick = (index) => {
     setSelectedMenu(index);
   };
 
-  const handleProfileClick = () => {
+  const handleProfileClick = async () => {
     setIsProfileDropdownOpen((prev) => !prev);
+
+    if (!profile) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        // console.log("profile:", response.data);
+        setProfile(response.data);
+      }
+      catch (e) {
+        console.log("Profile:", e.response?.data || e.message);
+      }
+    }
   };
+
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+    window.location.href = "http://localhost:3000/login";
+  }
 
   const menuClass = "menu";
   const activeMenuClass = "menu selected";
@@ -62,20 +87,20 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className="profile d-flex align-items-center" onClick={setIsProfileDropdownOpen}>
+        <div className="profile d-flex align-items-center" onClick={handleProfileClick}>
           <div className="avatar"><i className="fa-solid fa-circle-user fs-2"></i></div>
           <div>
-            <p className="username">USERID</p>
+            <p className="username">{profile?.name || "USERID"}</p>
           </div>
         </div>
 
         {isProfileDropdownOpen && (
           <div className="profile-popup">
             <div >
-              <p>Name :  Adi</p>
-              <p>Email : adi@123</p>
+              <p>Name :  {profile?.name}</p>
+              <p>Email :{profile?.email}</p>
               <p>Account Status : Active</p>
-              <button type="button" className="logout-btn">
+              <button type="button" className="logout-btn" onClick={handleLogout}>
                 Logout
               </button>
               <button

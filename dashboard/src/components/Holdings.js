@@ -70,21 +70,23 @@ const Holdings = () => {
 
       <div className="order-table">
         <table>
-          <tr>
-            <th>Instrument</th>
-            <th>Qty.</th>
-            <th>Avg. cost</th>
-            <th>LTP</th>
-            <th>Cur. val</th>
-            <th>P&L</th>
-            {/* <th>Net chg.</th> */}
-            {/* <th>Day chg.</th> */}
-            {/* <th>Net PnL</th> */}
-          </tr>
+          <thead>
+            <tr>
+              <th>Instrument</th>
+              <th>Qty.</th>
+              <th>Avg. cost</th>
+              <th>LTP</th>
+              <th>Cur. val</th>
+              <th>P&L</th>
+              {/* <th>Net chg.</th> */}
+              {/* <th>Day chg.</th> */}
+              {/* <th>Net PnL</th> */}
+            </tr>
+          </thead>
 
           {
             allHoldings.map((stock, index) => {
-              console.log("HOLDING:", stock);
+              // console.log("HOLDING:", stock);
               const currVal = stock.price * stock.qty;
               const netPnl = currVal - stock.avg * stock.qty;
               const isProfit = netPnl >= 0.0;
@@ -92,16 +94,18 @@ const Holdings = () => {
               // const dayClass = stock.isLoss ? "loss" : "profit";
 
               return (
-                <tr key={index}>
-                  <td>{stock.name}</td>
-                  <td>{stock.qty}</td>
-                  <td>{stock.avg.toFixed(2)}</td>
-                  <td>{stock.price.toFixed(2)}</td>
-                  <td>{currVal.toFixed(2)}</td>
-                  <td className={profClass}>{(currVal - stock.avg * stock.qty).toFixed(2)}</td>
-                  {/* <td className={profClass}>{stock.net}</td> */}
-                  {/* <td className={profClass}>{netPnl.toFixed(2)}</td> */}
-                </tr>
+                <tbody>
+                  <tr key={index}>
+                    <td>{stock.name}</td>
+                    <td>{stock.qty}</td>
+                    <td>{stock.avg.toFixed(2)}</td>
+                    <td>{stock.price.toFixed(2)}</td>
+                    <td>{currVal.toFixed(2)}</td>
+                    <td className={profClass}>{(currVal - stock.avg * stock.qty).toFixed(2)}</td>
+                    {/* <td className={profClass}>{stock.net}</td> */}
+                    {/* <td className={profClass}>{netPnl.toFixed(2)}</td> */}
+                  </tr>
+                </tbody>
               )
             })
           }

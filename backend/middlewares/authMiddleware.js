@@ -14,9 +14,9 @@ const authMiddleWare = (req, res, next) => {
         const token = authHeader.split(" ")[1];
         // console.log("AUTH HEADER:", authHeader);
         // console.log("TOKEN:", token);
-        console.log("TOKEN TYPE:", typeof token);
-        console.log("TOKEN LENGTH:", token?.length);
-        console.log("SECRET EXISTS:", !!process.env.JWT_SECRET);
+        // console.log("TOKEN TYPE:", typeof token);
+        // console.log("TOKEN LENGTH:", token?.length);
+        // console.log("SECRET EXISTS:", !!process.env.JWT_SECRET);
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

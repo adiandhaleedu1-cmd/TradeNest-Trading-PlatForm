@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Team() {
     return (
@@ -22,7 +23,10 @@ export default function Team() {
                         Playing basketball is his zen.
                     </p>
                     <p className="lh-lg">
-                        Connect on <a href="#">Homepage</a> / <a href="#">TradingQnA</a> / <a href="#">Twitter</a>
+                        Connect on
+                        <Link to="/"> Homepage</Link> /
+                        <Link to="/support"> TradingQnA</Link> /
+                        <Link href="#"> Twitter</Link>
                     </p>
                 </div>
             </div>
