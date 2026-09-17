@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 import axios from "axios";
 
@@ -10,28 +10,40 @@ import "./BuyActionWindow.css";
 const BuyActionWindow = ({ uid }) => {
     const [stockQuantity, setStockQuantity] = useState(1);
     const [stockPrice, setStockPrice] = useState(0.0);
+    const [error, setError] = useState("");
 
     const generalContext = useContext(GeneralContext);
 
     const handleBuyClick = async () => {
         console.log("BUY CLICKED");
-        const token = localStorage.getItem("token");
 
-        const response = await axios.post("http://localhost:8080/newOrder", {
-            name: uid,
-            qty: stockQuantity,
-            price: stockPrice,
-            mode: "Buy",
-        },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-        console.log("BUY RESPONSE:", response.data);
-        console.log("REFRESH HOLDINGS CALLED");
-        generalContext.refreshData();
-        generalContext.closeBuyWindow();
+        try {
+            setError("");
+            const token = localStorage.getItem("token");
+
+            const response = await axios.post("http://localhost:8080/newOrder", {
+                name: uid,
+                qty: stockQuantity,
+                price: stockPrice,
+                mode: "Buy",
+            },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+            console.log("BUY RESPONSE:", response.data);
+            // console.log("REFRESH HOLDINGS CALLED");
+            generalContext.refreshData();
+            generalContext.closeBuyWindow();
+
+        } catch (e) {
+            const message =
+                e.response?.data?.message || "Something went wrong.";
+
+            console.log("Buy Error:", message);
+            setError(message);
+        }
     };
 
     const handleCancelClick = () => {
@@ -65,6 +77,14 @@ const BuyActionWindow = ({ uid }) => {
                     </fieldset>
                 </div>
             </div>
+
+            {
+                error && (
+                    <p className="error-message" style={{ color: "#dc3545" }}>
+                        {error}
+                    </p>
+                )
+            }
 
             <div className="buttons">
                 <span>Margin required ₹140.65</span>

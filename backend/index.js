@@ -76,6 +76,7 @@ app.get("/allPositions", authMiddleWare, async (req, res) => {
 });
 
 app.post("/newOrder", authMiddleWare, async (req, res) => {
+    const user = await UserModel.findById(req.userId);
 
     const existingHolding = await HoldingModel.findOne({
         userId: req.userId,
@@ -89,6 +90,20 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
 
     // Buy Logic
     if (req.body.mode === "Buy") {
+        const buyQty = Number(req.body.qty);
+        const buyPrice = Number(req.body.price);
+
+        const totalBuyAmount = buyPrice * buyQty;
+
+        if (user.balance < totalBuyAmount) {
+            return res.status(400).json({
+                message: "Insufficient Balance."
+            });
+        }
+
+        user.balance -= totalBuyAmount;
+        await user.save();
+
         if (existingHolding) {
             const oldQty = existingHolding.qty;
             const oldAvg = existingHolding.avg;
@@ -131,7 +146,7 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
         if (!existingPosition) {
             const newPosition = new PositionModel({
                 userId: req.userId,
-                 product: "CNC",
+                product: "CNC",
                 name: req.body.name,
                 qty: req.body.qty,
                 avg: req.body.price,
@@ -144,13 +159,19 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
 
     // Sell Logic  
     if (req.body.mode === "Sell") {
+
+        const sellQty = Number(req.body.qty);
+        const sellPrice = Number(req.body.price);
+
+        const totalSellAmount = sellPrice * sellQty;
+
         if (!existingHolding) {
             return res.status(400).json({
                 message: "You don't own this Stock."
             });
         }
 
-        const sellQty = Number(req.body.qty)
+        // const sellQty = Number(req.body.qty)
 
         if (existingHolding.qty < sellQty) {
             return res.status(400).json({
@@ -168,9 +189,9 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
             await existingHolding.save();
         }
 
-        if(!existingPosition){
+        if (!existingPosition) {
             return res.status(400).json({
-                message:"Position not found."
+                message: "Position not found."
             });
         }
         existingPosition.qty -= sellQty;
@@ -182,6 +203,9 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
         } else {
             await existingPosition.save();
         }
+
+        user.balance += totalSellAmount;
+        await user.save();
     }
 
     // Creating New Order
@@ -209,6 +233,24 @@ app.get("/allorders", authMiddleWare, async (req, res) => {
             message: "Failed to fetch orders."
         });
     }
+});
+
+app.get("/funds", authMiddleWare, async (req, res) => {
+    const userFund = await UserModel.findById(req.userId).select("-password");
+
+    const holdings = await HoldingModel.find({
+        userId: req.userId
+    });
+
+    const usedMargin = holdings.reduce(
+        (total, stock) => total + stock.avg * stock.qty,
+        0
+    );
+
+    res.status(200).json({
+        balance: userFund.balance,
+        usedMargin: usedMargin
+    });
 });
 
 // app.get("/protected", authMiddleware, (req, res) => {
@@ -289,9 +331,9 @@ app.post("/login", async (req, res) => {
 
 app.get("/profile", authMiddleWare, async (req, res) => {
     try {
-        console.log("PROFILE USER ID:", req.userId);
+        // console.log("PROFILE USER ID:", req.userId);
         const currUser = await UserModel.findById(req.userId).select("-password");
-        console.log("PROFILE USER:", currUser);
+        // console.log("PROFILE USER:", currUser);
 
         if (!currUser) {
             return res.status(404).json({

@@ -1,7 +1,35 @@
 import React from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 
+import axios from "axios";
+import GeneralContext from "./GeneralContext";
+
 const Funds = () => {
+  const [funds, setFunds] = useState(null);
+  const generalContext = useContext(GeneralContext);
+
+  useEffect(() => {
+
+    const fetchFunds = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/funds`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFunds(response.data);
+        // console.log(response.data);
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+    fetchFunds();
+  }, [generalContext.dataRefresh]);
+
   return (
     <>
       <div className="funds">
@@ -13,64 +41,32 @@ const Funds = () => {
       <div className="row">
         <div className="col">
           <span>
-            <p>Equity</p>
+            <p>Equity :</p>
           </span>
 
           <div className="table">
             <div className="data">
-              <p>Available margin</p>
-              <p className="imp colored">4,043.10</p>
+              <p>Available Cash: </p>
+              <p className="imp colored"> ₹{(funds?.balance || 0).toFixed(2)}</p>
             </div>
             <div className="data">
-              <p>Used margin</p>
-              <p className="imp">3,757.30</p>
-            </div>
-            <div className="data">
-              <p>Available cash</p>
-              <p className="imp">4,043.10</p>
+              <p>Used margin : </p>
+              <p className="imp">₹{(funds?.usedMargin || 0).toFixed(2)}</p>
             </div>
             <hr />
             <div className="data">
               <p>Opening Balance</p>
-              <p>4,043.10</p>
+              <p>₹10000.00</p>
             </div>
-            <div className="data">
+            {/* <div className="data">
               <p>Opening Balance</p>
               <p>3736.40</p>
-            </div>
-            <div className="data">
+            </div> */}
+            {/* <div className="data">
               <p>Payin</p>
               <p>4064.00</p>
-            </div>
-            <div className="data">
-              <p>SPAN</p>
-              <p>0.00</p>
-            </div>
-            <div className="data">
-              <p>Delivery margin</p>
-              <p>0.00</p>
-            </div>
-            <div className="data">
-              <p>Exposure</p>
-              <p>0.00</p>
-            </div>
-            <div className="data">
-              <p>Options premium</p>
-              <p>0.00</p>
-            </div>
-            <hr />
-            <div className="data">
-              <p>Collateral (Liquid funds)</p>
-              <p>0.00</p>
-            </div>
-            <div className="data">
-              <p>Collateral (Equity)</p>
-              <p>0.00</p>
-            </div>
-            <div className="data">
-              <p>Total Collateral</p>
-              <p>0.00</p>
-            </div>
+            </div> */}
+            {/* <hr /> */}
           </div>
         </div>
 
