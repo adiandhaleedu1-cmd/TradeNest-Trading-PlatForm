@@ -15,6 +15,7 @@ export const GeneralContextProvider = (props) => {
   const [selectedStockUID, setSelectedStockUID] = useState("");
   const [holdingsRefresh, setHoldingsRefresh] = useState(0);
   const [isSellWindowOpen, setIsSellWindowOpen] = useState(false);
+  const [dataRefresh, setDataRefresh] = useState(0);
 
   const handleOpenBuyWindow = (uid) => {
     setIsBuyWindowOpen(true);
@@ -37,6 +38,10 @@ export const GeneralContextProvider = (props) => {
     setSelectedStockUID("");
   };
 
+  const handleDataRefresh = () => {
+    setDataRefresh((prev) => prev + 1);
+  };;
+
   return (
     <GeneralContext.Provider
       value={{
@@ -45,10 +50,8 @@ export const GeneralContextProvider = (props) => {
 
         openSellWindow: handleOpenSellWindow,
         closeSellWindow: handleCloseSellWindow,
-        holdingsRefresh,
-        refreshHoldings: () => {
-          setHoldingsRefresh((prev) => prev + 1);
-        }
+        dataRefresh,
+        refreshData: handleDataRefresh
       }}
     >
       {props.children}

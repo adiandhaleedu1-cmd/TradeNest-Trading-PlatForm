@@ -35,6 +35,7 @@ const SellActionWindow = ({ uid }) => {
                 });
 
             console.log("Sell response : ", response.data);
+            generalContext.refreshData();
             generalContext.closeSellWindow();
         } catch (e) {
             console.log("Sell Error: ",

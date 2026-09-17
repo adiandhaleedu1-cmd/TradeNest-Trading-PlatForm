@@ -10,7 +10,7 @@ import { VerticalChart } from "./VerticalChart";
 
 const Holdings = () => {
   const generalContext = useContext(GeneralContext);
-
+  // console.log("HOLDINGS RENDER:", generalContext.dataRefresh);
   const [allHoldings, setAllHoldings] = useState([]);
 
   const HostUrl = process.env.REACT_APP_HOST_URL;
@@ -18,6 +18,7 @@ const Holdings = () => {
 
   useEffect(() => {
     console.log("HOLDINGS EFFECT RUNNING");
+    // console.log("REFRESH VALUE:", generalContext.holdingsRefresh);
 
     axios.get(`${HostUrl}/allHoldings`, {
       headers: {
@@ -31,7 +32,7 @@ const Holdings = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, [generalContext.holdingsRefresh]);
+  }, [generalContext.dataRefresh]);
 
   const totalInvestment = allHoldings.reduce(
     (total, stock) => total + stock.avg * stock.qty,

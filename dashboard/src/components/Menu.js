@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./profile.css";
@@ -10,16 +10,15 @@ const Menu = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  const handleMenuClick = (index) => {
-    setSelectedMenu(index);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  const handleProfileClick = async () => {
-    setIsProfileDropdownOpen((prev) => !prev);
+    if (!token) {
+      return;
+    }
 
-    if (!profile) {
+    const feachProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
 
         const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/profile`, {
           headers: {
@@ -27,17 +26,51 @@ const Menu = () => {
           }
         });
 
-        // console.log("profile:", response.data);
         setProfile(response.data);
-      }
-      catch (e) {
-        console.log("Profile:", e.response?.data || e.message);
+      } catch (e) {
+        console.log("Profile: ", e.response?.data || e.message);
       }
     }
+    feachProfile();
+  }, []);
+
+  const handleMenuClick = (index) => {
+    setSelectedMenu(index);
+  };
+
+  const handleProfileClick = async () => {
+    setIsProfileDropdownOpen((prev) => !prev);
+
+    // if (!profile) {
+    //   try {
+    //     const token = localStorage.getItem("token");
+
+    //     const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/profile`, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       }
+    //     });
+
+    //     // console.log("profile:", response.data);
+    //     setProfile(response.data);
+    //   }
+    //   catch (e) {
+    //     console.log("Profile:", e.response?.data || e.message);
+    //   }
+    // }
   };
 
   const handleLogout = async () => {
     localStorage.removeItem("token");
+    setProfile(null);
+    setIsProfileDropdownOpen(false)
+    // window.location.href = "http://localhost:3000/login";
+
+    console.log("TOKEN AFTER LOGOUT:", localStorage.getItem("token"));
+  };
+
+  const handleLogin = () => {
+    // localStorage.removeItem("token");
     window.location.href = "http://localhost:3000/login";
   }
 
@@ -87,18 +120,24 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className="profile d-flex align-items-center" onClick={handleProfileClick}>
-          <div className="avatar"><i className="fa-solid fa-circle-user fs-2"></i></div>
-          <div>
-            <p className="username">{profile?.name || "USERID"}</p>
+        {profile ? (
+          <div className="profile d-flex align-items-center" onClick={handleProfileClick}>
+            <div className="avatar"><i className="fa-solid fa-circle-user fs-2"></i></div>
+            <div>
+              <p className="username">{profile?.name}</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <button type="button" className="logout-btn" onClick={handleLogin}>
+            Login
+          </button>
+        )}
 
         {isProfileDropdownOpen && (
           <div className="profile-popup">
             <div >
-              <p>Name :  {profile?.name}</p>
-              <p>Email :{profile?.email}</p>
+              <p>Name : {profile?.name}</p>
+              <p>Email : {profile?.email}</p>
               <p>Account Status : Active</p>
               <button type="button" className="logout-btn" onClick={handleLogout}>
                 Logout

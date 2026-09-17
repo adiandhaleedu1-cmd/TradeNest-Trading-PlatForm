@@ -1,11 +1,14 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
+import GeneralContext from "./GeneralContext";
 
 const Orders = () => {
   const [allOrders, setAllOrders] = useState([]);
+  const generalContext = useContext(GeneralContext);
+
 
   const HostUrl = process.env.REACT_APP_HOST_URL;
   const token = localStorage.getItem("token");
@@ -27,7 +30,7 @@ const Orders = () => {
         console.log("order err: ", e);
         console.log("ORDER ERROR:", e.response?.data || e.message);
       });
-  }, []);
+  }, [generalContext.dataRefresh]);
 
   return (
     <div className="orders">

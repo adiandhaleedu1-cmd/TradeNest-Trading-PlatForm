@@ -30,7 +30,7 @@ const BuyActionWindow = ({ uid }) => {
             });
         console.log("BUY RESPONSE:", response.data);
         console.log("REFRESH HOLDINGS CALLED");
-        generalContext.refreshHoldings();
+        generalContext.refreshData();
         generalContext.closeBuyWindow();
     };
 

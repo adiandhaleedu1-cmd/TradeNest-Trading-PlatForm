@@ -82,6 +82,11 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
         name: req.body.name
     });
 
+    const existingPosition = await PositionModel.findOne({
+        userId: req.userId,
+        name: req.body.name,
+    });
+
     // Buy Logic
     if (req.body.mode === "Buy") {
         if (existingHolding) {
@@ -97,6 +102,20 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
             await existingHolding.save();
         }
 
+        if (existingPosition) {
+            const oldQty = existingPosition.qty;
+            const oldAvg = existingPosition.avg;
+
+            const newQty = Number(req.body.qty);
+            const newPrice = Number(req.body.price);
+
+            existingPosition.avg = ((oldAvg * oldQty) + (newQty * newPrice)) / (oldQty + newQty);
+
+            existingPosition.qty += Number(req.body.qty);
+            existingPosition.price = newPrice;
+            await existingPosition.save();
+        }
+
         if (!existingHolding) {
             const newHolding = new HoldingModel({
                 userId: req.userId,
@@ -107,6 +126,19 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
             });
             // console.log(newOrder);
             await newHolding.save();
+        }
+
+        if (!existingPosition) {
+            const newPosition = new PositionModel({
+                userId: req.userId,
+                 product: "CNC",
+                name: req.body.name,
+                qty: req.body.qty,
+                avg: req.body.price,
+                price: req.body.price,
+            });
+            // console.log(newOrder);
+            await newPosition.save();
         }
     }
 
@@ -134,6 +166,21 @@ app.post("/newOrder", authMiddleWare, async (req, res) => {
             });
         } else {
             await existingHolding.save();
+        }
+
+        if(!existingPosition){
+            return res.status(400).json({
+                message:"Position not found."
+            });
+        }
+        existingPosition.qty -= sellQty;
+
+        if (existingPosition.qty === 0) {
+            await PositionModel.deleteOne({
+                _id: existingPosition._id
+            });
+        } else {
+            await existingPosition.save();
         }
     }
 
@@ -164,12 +211,12 @@ app.get("/allorders", authMiddleWare, async (req, res) => {
     }
 });
 
-app.get("/protected", authMiddleware, (req, res) => {
-    res.status(200).json({
-        message: "You have access to protected route",
-        userId: req.userId,
-    });
-});
+// app.get("/protected", authMiddleware, (req, res) => {
+//     res.status(200).json({
+//         message: "You have access to protected route",
+//         userId: req.userId,
+//     });
+// });
 
 app.post("/signup", async (req, res) => {
 

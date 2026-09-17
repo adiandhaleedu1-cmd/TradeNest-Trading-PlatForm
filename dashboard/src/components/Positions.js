@@ -2,56 +2,59 @@ import React from "react";
 
 // import { positions } from "../data/data";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import GeneralContext from "./GeneralContext";
 
 const Positions = () => {
-
   const [allPositions, setAllPositions] = useState([]);
 
+  const generalContext = useContext(GeneralContext);
+
   const HostUrl = process.env.REACT_APP_HOST_URL;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
 
-    console.log("TOKEN FROM DASHBOARD:", token);
+    // console.log("TOKEN FROM DASHBOARD:", token);
 
-    axios.get("http://localhost:8080/protected", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-    .then((res) => {
-        console.log("PROTECTED RESPONSE:", res.data);
-    })
-    .catch((err) => {
-        console.log("PROTECTED ERROR:", err.response?.data);
-    });
-
-}, []);
-
-  useEffect(() => {
-    axios.get(`${HostUrl}/allPositions`).then((res) => {
-      // console.log(res.data);
-      setAllPositions(res.data);
-    });
-
-    // JWT Test
-    const token = localStorage.getItem("token");
-
-    axios.get("http://localhost:8080/protected", {
+    axios.get(`${HostUrl}/allPositions`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
-        console.log("Protected:", res.data);
+        setAllPositions(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
-        console.log("Protected Error:", err.response?.data);
+        console.log("Positions ERROR:", err.response?.data);
       });
 
-  }, []);
+  }, [generalContext.dataRefresh]);
+
+  // useEffect(() => {
+  //   axios.get(`${HostUrl}/allPositions`).then((res) => {
+  //     // console.log(res.data);
+  //     setAllPositions(res.data);
+  //   });
+
+  //   // JWT Test
+  //   const token = localStorage.getItem("token");
+
+  //   axios.get("http://localhost:8080/protected", {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   })
+  //     .then((res) => {
+  //       console.log("Protected:", res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Protected Error:", err.response?.data);
+  //     });
+
+  // }, []);
 
   return (
     <>
@@ -59,38 +62,40 @@ const Positions = () => {
 
       <div className="order-table">
         <table>
-          <tr>
-            <th>Product</th>
-            <th>Instrument</th>
-            <th>Qty.</th>
-            <th>Avg.</th>
-            <th>LTP</th>
-            <th>P&L</th>
-            <th>Chg.</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Instrument</th>
+              <th>Qty.</th>
+              <th>Avg.</th>
+              <th>LTP</th>
+              <th>P&L</th>
+              {/* <th>Chg.</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              allPositions.map((stock, index) => {
 
-          {
-            allPositions.map((stock, index) => {
+                const currVal = stock.price * stock.qty;
+                const isProfit = currVal - stock.avg * stock.qty >= 0.0;
+                const profClass = isProfit ? "profit" : "loss";
+                const dayClass = stock.isLoss ? "loss" : "profit";
 
-              const currVal = stock.price * stock.qty;
-              const isProfit = currVal - stock.avg * stock.qty >= 0.0;
-              const profClass = isProfit ? "profit" : "loss";
-              const dayClass = stock.isLoss ? "loss" : "profit";
-
-              return (
-                <tr key={index}>
-                  <td>{stock.product}</td>
-                  <td>{stock.name}</td>
-                  <td>{stock.qty}</td>
-                  <td>{stock.avg.toFixed(2)}</td>
-                  <td>{stock.price.toFixed(2)}</td>
-                  <td className={profClass}>{(currVal - stock.avg * stock.qty).toFixed(2)}</td>
-                  <td className={dayClass}>{stock.day}</td>
-                </tr>
-              )
-            })
-          }
-
+                return (
+                  <tr key={index}>
+                    <td>{stock.product}</td>
+                    <td>{stock.name}</td>
+                    <td>{stock.qty}</td>
+                    <td>{stock.avg.toFixed(2)}</td>
+                    <td>{stock.price.toFixed(2)}</td>
+                    <td className={profClass}>{(currVal - stock.avg * stock.qty).toFixed(2)}</td>
+                    {/* <td className={dayClass}>{stock.day}</td> */}
+                  </tr>
+                )
+              })
+            }
+          </tbody>
         </table>
       </div>
     </>

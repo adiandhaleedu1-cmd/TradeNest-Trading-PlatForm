@@ -25,10 +25,14 @@ export default function SignupForm() {
                 formData,
             );
             console.log(response.data);
+
+            if (response.status === 201) {
+                alert("Signup Successful!!!");
+                window.location.href = "/login";
+            }
         } catch (e) {
-            console.log(e.response?.data);
+            alert("Something went wrong. Please try again.")
         }
-        window.location.href = "http://localhost:3001";
     };
 
     const handleChange = (e) => {
@@ -69,7 +73,7 @@ export default function SignupForm() {
                                 onChange={handleChange}
                                 required
                             />
-                            <div id="emailHelp" class="form-text">
+                            <div id="emailHelp" className="form-text">
                                 We'll never share your email with anyone else.
                             </div>
                         </div>
@@ -89,7 +93,7 @@ export default function SignupForm() {
                             />
                         </div>
 
-                        <div class="mb-3">
+                        <div className="mb-3">
                             <label htmlFor="inputPassword" className="form-label">
                                 Password
                             </label>
