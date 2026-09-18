@@ -13,10 +13,12 @@ const Holdings = () => {
   // console.log("HOLDINGS RENDER:", generalContext.dataRefresh);
   const [allHoldings, setAllHoldings] = useState([]);
 
-  const HostUrl = process.env.REACT_APP_HOST_URL;
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
+
+    const HostUrl = process.env.REACT_APP_HOST_URL;
+    const token = localStorage.getItem("token");
+
     console.log("HOLDINGS EFFECT RUNNING");
     // console.log("REFRESH VALUE:", generalContext.holdingsRefresh);
 
@@ -50,7 +52,7 @@ const Holdings = () => {
       ? (totalPnl / totalInvestment) * 100
       : 0;
 
-  const totalPnlClass = totalPnl >= 0 ? "profit" : "loss";
+  // const totalPnlClass = totalPnl >= 0 ? "profit" : "loss";
 
   const labels = allHoldings.map((subArray) => subArray["name"]);
 
