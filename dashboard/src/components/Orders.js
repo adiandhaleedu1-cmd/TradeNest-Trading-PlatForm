@@ -10,19 +10,20 @@ const Orders = () => {
   const generalContext = useContext(GeneralContext);
 
 
-  const HostUrl = process.env.REACT_APP_HOST_URL;
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios
-      .get(`${HostUrl}/allOrders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+
+    const HostUrl = process.env.REACT_APP_HOST_URL;
+    const token = localStorage.getItem("token");
+
+    axios.get(`${HostUrl}/allOrders`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => {
-        console.log("ORDERS RESPONSE:", res);
-        console.log("ORDERS:", res.data);
+        // console.log("ORDERS RESPONSE:", res);
+        // console.log("ORDERS:", res.data);
 
         setAllOrders(res.data);
       })

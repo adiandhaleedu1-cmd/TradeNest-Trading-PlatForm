@@ -78,7 +78,7 @@ export default function SignupForm() {
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div className="mb-3">
                             <label htmlFor="inputName" className="form-label">
                                 Enter Your Name
                             </label>

@@ -87,18 +87,18 @@ const Holdings = () => {
             </tr>
           </thead>
 
-          {
-            allHoldings.map((stock, index) => {
-              // console.log("HOLDING:", stock);
-              const currVal = stock.price * stock.qty;
-              const netPnl = currVal - stock.avg * stock.qty;
-              const isProfit = netPnl >= 0.0;
-              const profClass = isProfit ? "profit" : "loss";
-              // const dayClass = stock.isLoss ? "loss" : "profit";
+          <tbody>
+            {
+              allHoldings.map((stock, index) => {
+                // console.log("HOLDING:", stock);
+                const currVal = stock.price * stock.qty;
+                const netPnl = currVal - stock.avg * stock.qty;
+                const isProfit = netPnl >= 0.0;
+                const profClass = isProfit ? "profit" : "loss";
+                // const dayClass = stock.isLoss ? "loss" : "profit";
 
-              return (
-                <tbody>
-                  <tr key={index}>
+                return (
+                  <tr key={stock._id || index}>
                     <td>{stock.name}</td>
                     <td>{stock.qty}</td>
                     <td>{stock.avg.toFixed(2)}</td>
@@ -108,11 +108,10 @@ const Holdings = () => {
                     {/* <td className={profClass}>{stock.net}</td> */}
                     {/* <td className={profClass}>{netPnl.toFixed(2)}</td> */}
                   </tr>
-                </tbody>
-              )
-            })
-          }
-
+                )
+              })
+            }
+          </tbody>
         </table>
       </div>
 

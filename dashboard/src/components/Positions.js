@@ -11,10 +11,9 @@ const Positions = () => {
 
   const generalContext = useContext(GeneralContext);
 
-  const HostUrl = process.env.REACT_APP_HOST_URL;
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
+    const HostUrl = process.env.REACT_APP_HOST_URL;
+    const token = localStorage.getItem("token");
 
     // console.log("TOKEN FROM DASHBOARD:", token);
 
@@ -25,10 +24,11 @@ const Positions = () => {
     })
       .then((res) => {
         setAllPositions(res.data);
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         console.log("Positions ERROR:", err.response?.data);
+        // alert("Authentication Required.");
       });
 
   }, [generalContext.dataRefresh]);
@@ -80,7 +80,7 @@ const Positions = () => {
                 const currVal = stock.price * stock.qty;
                 const isProfit = currVal - stock.avg * stock.qty >= 0.0;
                 const profClass = isProfit ? "profit" : "loss";
-                const dayClass = stock.isLoss ? "loss" : "profit";
+                // const dayClass = stock.isLoss ? "loss" : "profit";
 
                 return (
                   <tr key={index}>
