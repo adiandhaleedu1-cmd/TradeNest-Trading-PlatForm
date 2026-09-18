@@ -21,7 +21,7 @@ export default function SignupForm() {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/signup",
+                `${process.env.REACT_APP_HOST_URL}/signup`,
                 formData,
             );
             console.log(response.data);

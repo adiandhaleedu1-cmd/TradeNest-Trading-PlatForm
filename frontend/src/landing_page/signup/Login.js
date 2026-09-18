@@ -20,7 +20,7 @@ export default function Login() {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/login",
+                `${process.env.REACT_APP_HOST_URL}/login`,
                 formData,
             );
             console.log(response.data);
