@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = require("./middlewares/authMiddleware");
+// const authMiddleware = require("./middlewares/authMiddleware");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -24,6 +24,9 @@ const { PositionModel } = require("./models/PositionModel");
 const { OrderModel } = require("./models/OrderModel");
 const { UserModel } = require("./models/UserModel");
 const authMiddleWare = require("./middlewares/authMiddleware");
+
+const holdingsRoutes = require("./routes/holdingRoutes");
+const positionsRoutes = require("./routes/positionRoutes");
 
 // app.get("/addPositions", async (req, res) => {
 //     let tempPositions = [
@@ -65,15 +68,19 @@ const authMiddleWare = require("./middlewares/authMiddleware");
 //     res.send("Done");
 // })
 
-app.get("/allHoldings", authMiddleWare, async (req, res) => {
-    const allHoldings = await HoldingModel.find({ userId: req.userId });
-    res.json(allHoldings);
-});
+// app.get("/allHoldings", authMiddleWare, async (req, res) => {
+//     const allHoldings = await HoldingModel.find({ userId: req.userId });
+//     res.json(allHoldings);
+// });
 
-app.get("/allPositions", authMiddleWare, async (req, res) => {
-    const allPositions = await PositionModel.find({ userId: req.userId });
-    res.json(allPositions);
-});
+app.use("/", holdingsRoutes);
+
+// app.get("/allPositions", authMiddleWare, async (req, res) => {
+//     const allPositions = await PositionModel.find({ userId: req.userId });
+//     res.json(allPositions);
+// });
+
+app.use("/", positionsRoutes);
 
 app.post("/newOrder", authMiddleWare, async (req, res) => {
     const user = await UserModel.findById(req.userId);
