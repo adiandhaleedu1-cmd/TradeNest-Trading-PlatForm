@@ -65,7 +65,7 @@ const Summary = () => {
       : 0;
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/login";
+    window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
   }
 
   return (

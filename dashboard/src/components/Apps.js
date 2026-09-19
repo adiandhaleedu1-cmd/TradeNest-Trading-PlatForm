@@ -2,7 +2,7 @@ import React from "react";
 
 const Apps = () => {
   const handleExplore = () => {
-    window.location.href = "http://localhost:3000/products";
+    window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/products`;
   }
   return (
     <>

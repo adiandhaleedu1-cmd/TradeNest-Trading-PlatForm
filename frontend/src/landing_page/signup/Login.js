@@ -27,7 +27,7 @@ export default function Login() {
 
             if (response.status === 200 && response.data.token) {
                 localStorage.setItem("token", response.data.token);
-                window.location.href = `http://localhost:3001?token=${response.data.token}`;
+                window.location.href = `${process.env.REACT_APP_DASHBOARD_URL}?token=${response.data.token}`;
             }
 
         } catch (e) {
