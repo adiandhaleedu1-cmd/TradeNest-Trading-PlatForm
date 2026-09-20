@@ -30,7 +30,7 @@ Users can securely log in, manage their watchlist, place buy/sell orders, and tr
 ## Live Demo
 
 **Frontend:**  
-https://tradenest-trading-platform-1.onrender.com
+Live : (https://tradenest-trading-platform-1.onrender.com)
 
 **Dashboard:**  
 https://tradenest-trading-platform-2.onrender.com/
